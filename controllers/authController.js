@@ -4,6 +4,7 @@ const usersDB = {
 }
 const bcrypt = require('bcrypt');
 
+
 const handleLogin = async (req, res) => {
     const { user, pwd } = req.body;
     if (!user || !pwd) return res.status(400).json({ 'message': 'Username and password are required.' });
@@ -13,10 +14,9 @@ const handleLogin = async (req, res) => {
     const match = await bcrypt.compare(pwd, foundUser.password);
     if (match) {
         // create JWTs
-        req.session.loggedIn = true;
-        req.session.user = usersDB.users;
-        res.render('index',{user:user, login: 'Logout'})
-        // json({ 'success': `User ${user} is logged in!` });
+        req.session.user = foundUser
+        req.session.authorized = true
+        res.redirect('/');
     } else {
         res.sendStatus(401);
     }
